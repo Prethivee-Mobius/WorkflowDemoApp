@@ -81,6 +81,8 @@ const ChatStream = ({ onWorkflowSteps }) => {
     return steps.slice(0, 8); // Limit to 8 steps for visualization
   };
 
+  // this is assdasdasdqerwe4hfWEUFJeifjW E98F
+
   // Generate mock workflow based on user prompt for demo purposes
   const generateMockWorkflow = (userPrompt) => {
     const prompt = userPrompt.toLowerCase();
