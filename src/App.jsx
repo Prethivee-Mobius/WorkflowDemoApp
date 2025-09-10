@@ -13,14 +13,18 @@ function App() {
   return (
     <div className="App">
       <h1>
-        <img src="/xtract-logo.svg" alt="XTRACT.io" className="title-logo" />
+        <img
+          src="https://www.xtract.io/img/Xtract-logo1.png"
+          alt="XTRACT.io"
+          className="title-logo"
+        />
         Workflow UI Component Prototypes
       </h1>
       <div className="main-layout">
-        <div className="chat-section" style={{ border: "1px solid green" }}>
+        <div className="chat-section">
           <ChatStream onWorkflowSteps={handleNewWorkflowSteps} />
         </div>
-        <div className="workflow-section" style={{ border: "1px solid red" }}>
+        <div className="workflow-section">
           <WorkflowVisualization workflowSteps={workflowSteps} />
         </div>
       </div>

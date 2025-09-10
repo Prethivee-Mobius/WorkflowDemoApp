@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  padding: 2rem;
-  max-width: 1200px;
+  /* padding: 2rem; */
+  max-width: 90vw;
   margin: 0 auto;
   position: relative;
   min-height: 100vh;
@@ -34,7 +34,7 @@
 }
 
 .title-logo {
-  height: 24px;
+  height: 15px;
   width: auto;
   object-fit: contain;
 }
@@ -92,7 +92,9 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #ffffff;
@@ -208,7 +210,9 @@ h1 {
   color: #333;
   margin-bottom: 1rem;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   font-weight: 500;
   letter-spacing: -0.3px;
   font-size: 1.4rem;
@@ -229,6 +233,8 @@ h1 {
 .chat-section {
   flex: 1;
   min-width: 0;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .workflow-section {
@@ -236,6 +242,8 @@ h1 {
   min-width: 400px;
   border-left: 2px solid #eee;
   padding-left: 2rem;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .workflow-visualization {
@@ -251,7 +259,9 @@ h1 {
 .workflow-header h3 {
   margin: 0;
   color: #333;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   font-size: 1.4rem;
   font-weight: 600;
 }
@@ -271,7 +281,9 @@ h1 {
   padding: 12px;
   min-width: 120px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
 }
 
 .bot-node-header {
@@ -300,11 +312,13 @@ h1 {
 /* Filter Edge Styles */
 .filter-edge {
   stroke: #ff6b6b !important;
-  stroke-dasharray: 5,5;
+  stroke-dasharray: 5, 5;
 }
 
 .filter-label {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   font-size: 10px;
   fill: #ff6b6b;
   font-weight: 600;
@@ -367,4 +381,3 @@ h1 {
   line-height: 18px;
   text-align: center;
 }
-

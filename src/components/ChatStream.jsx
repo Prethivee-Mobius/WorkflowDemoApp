@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import ReactMarkdown from "react-markdown";
 import Papa from "papaparse";
 import { FaFilePdf, FaFileWord, FaFile } from "react-icons/fa";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 
 // Helper to convert file to base64
 const fileToGenerativePart = async (file) => {
@@ -22,6 +23,7 @@ const fileToGenerativePart = async (file) => {
 const ChatStream = ({ onWorkflowSteps }) => {
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState("");
+  const [response2, setResponse2] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [attachments, setAttachments] = useState([]);
   const [isBlurred, setIsBlurred] = useState(false);
@@ -213,7 +215,7 @@ const ChatStream = ({ onWorkflowSteps }) => {
 
   useEffect(() => {
     responseEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [response]);
+  }, [response, response2]);
 
   const handlePromptChange = (e) => {
     setPrompt(e.target.value);
@@ -397,6 +399,51 @@ const ChatStream = ({ onWorkflowSteps }) => {
     }
   };
 
+  const handlePromptSend = async (e) => {
+    e.preventDefault();
+    if (!prompt.trim() && attachments.length === 0) return;
+
+    setIsLoading(true);
+    setResponse2("");
+
+    let accumulated = "";
+    await fetchEventSource("http://13.49.230.109:8000/api/stream", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_input: prompt,
+        session_id: "postman-test-123",
+      }),
+      onmessage(event) {
+        try {
+          const data = JSON.parse(event.data);
+
+          if (data.chunk) {
+            accumulated += data.chunk;
+            setResponse2(accumulated);
+          }
+
+          if (data.isComplete) {
+            console.log("✅ Stream completed");
+            setIsLoading(false);
+            setPrompt("");
+          }
+
+          if (data.error) {
+            console.error("❌ Stream error:", data.error);
+          }
+        } catch (err) {
+          console.error("Failed to parse event:", event.data);
+        }
+      },
+      onerror(err) {
+        console.error("EventSource failed:", err);
+      },
+    });
+  };
+
   return (
     <div className="component-section chat-container">
       <div className="chat-header">
@@ -409,7 +456,8 @@ const ChatStream = ({ onWorkflowSteps }) => {
         </button>
       </div>
       <div className={`response-area ${isBlurred ? "blurred" : ""}`}>
-        <ReactMarkdown>{response}</ReactMarkdown>
+        {/* <ReactMarkdown>{response}</ReactMarkdown> */}
+        <ReactMarkdown>{response2}</ReactMarkdown>
         <div ref={responseEndRef} />
       </div>
       <div className="form-container">
@@ -428,7 +476,8 @@ const ChatStream = ({ onWorkflowSteps }) => {
             ))}
           </div>
         )}
-        <form onSubmit={handleSubmit} className="chat-form">
+        {/* <form onSubmit={handleSubmit} className="chat-form"> */}
+        <form onSubmit={handlePromptSend} className="chat-form">
           <input
             type="file"
             ref={fileInputRef}
