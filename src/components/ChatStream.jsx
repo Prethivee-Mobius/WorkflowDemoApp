@@ -29,6 +29,7 @@ const ChatStream = ({ onWorkflowSteps }) => {
   const [isBlurred, setIsBlurred] = useState(false);
   const responseEndRef = useRef(null);
   const fileInputRef = useRef(null);
+  const [chat, setChat] = useState([]);
 
   // Function to extract workflow steps from chat response
   const extractWorkflowSteps = (text) => {
@@ -215,11 +216,12 @@ const ChatStream = ({ onWorkflowSteps }) => {
 
   useEffect(() => {
     responseEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [response, response2]);
+  }, [response, chat]);
 
   const handlePromptChange = (e) => {
     setPrompt(e.target.value);
   };
+  
 
   const handlePaste = (e) => {
     const items = e.clipboardData.items;
@@ -404,9 +406,13 @@ const ChatStream = ({ onWorkflowSteps }) => {
     if (!prompt.trim() && attachments.length === 0) return;
 
     setIsLoading(true);
-    setResponse2("");
+    // setResponse2("");
+    // Add user message immediately
+    setChat((prev) => [...prev, { role: "user", content: prompt }]);
 
     let accumulated = "";
+    setChat((prev) => [...prev, { role: "assistant", content: "" }]);
+
     await fetchEventSource("http://13.49.230.109:8000/api/stream", {
       method: "POST",
       headers: {
@@ -423,6 +429,14 @@ const ChatStream = ({ onWorkflowSteps }) => {
           if (data.chunk) {
             accumulated += data.chunk;
             setResponse2(accumulated);
+            setChat((prev) => {
+              const updated = [...prev];
+              updated[updated.length - 1] = {
+                role: "assistant",
+                content: accumulated,
+              };
+              return updated;
+            });
           }
 
           if (data.isComplete) {
@@ -433,16 +447,21 @@ const ChatStream = ({ onWorkflowSteps }) => {
 
           if (data.error) {
             console.error("❌ Stream error:", data.error);
+            setIsLoading(false);
           }
         } catch (err) {
           console.error("Failed to parse event:", event.data);
+          setIsLoading(false);
         }
       },
       onerror(err) {
         console.error("EventSource failed:", err);
+        setIsLoading(false);
       },
     });
   };
+
+  console.log("Chat state:", chat);
 
   return (
     <div className="component-section chat-container">
@@ -457,8 +476,23 @@ const ChatStream = ({ onWorkflowSteps }) => {
       </div>
       <div className={`response-area ${isBlurred ? "blurred" : ""}`}>
         {/* <ReactMarkdown>{response}</ReactMarkdown> */}
-        <ReactMarkdown>{response2}</ReactMarkdown>
-        <div ref={responseEndRef} />
+        {/* <ReactMarkdown>{response2}</ReactMarkdown> */}
+        {/*<div ref={responseEndRef} /> */}
+
+        <div className="chat-messages">
+          {chat.map((msg, i) => (
+            <div key={i}>
+              {msg.role === "assistant" ? (
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              ) : (
+                <div className="user-message">
+                  <p>{msg.content}</p>
+                </div>
+              )}
+              <div ref={responseEndRef} />
+            </div>
+          ))}
+        </div>
       </div>
       <div className="form-container">
         {attachments.length > 0 && (
