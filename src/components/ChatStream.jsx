@@ -221,7 +221,6 @@ const ChatStream = ({ onWorkflowSteps }) => {
   const handlePromptChange = (e) => {
     setPrompt(e.target.value);
   };
-  
 
   const handlePaste = (e) => {
     const items = e.clipboardData.items;
@@ -308,18 +307,21 @@ const ChatStream = ({ onWorkflowSteps }) => {
       // Stream the response
       for await (const chunk of result.stream) {
         const chunkText = chunk.text();
-        // console.log("aaaa chunkText:", chunkText);
         accumulatedResponse += chunkText;
         setResponse(accumulatedResponse);
       }
 
-      // console.log("aaaa accumulatedResponse:", accumulatedResponse);
-
       // Extract workflow steps from the complete response
       const workflowSteps = extractWorkflowSteps(accumulatedResponse);
+      console.log(
+        "Extracted workflow steps:",
+        workflowSteps,
+        "accumulatedResponse",
+        accumulatedResponse
+      );
+
       if (workflowSteps.length > 0 && onWorkflowSteps) {
-        console.log("Extracted workflow steps:", workflowSteps);
-        onWorkflowSteps(workflowSteps);
+        onWorkflowSteps(workflowSteps); // update the workflow in screen UI
       }
     } catch (error) {
       console.error("Error generating content:", error);
@@ -413,7 +415,7 @@ const ChatStream = ({ onWorkflowSteps }) => {
     let accumulated = "";
     setChat((prev) => [...prev, { role: "assistant", content: "" }]);
 
-    await fetchEventSource("http://13.49.230.109:8000/api/stream", {
+    await fetchEventSource("http://13.49.230.109:80/api/stream", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -443,6 +445,22 @@ const ChatStream = ({ onWorkflowSteps }) => {
             console.log("✅ Stream completed");
             setIsLoading(false);
             setPrompt("");
+            const workflowId = extractGetWorkflowId(accumulated);
+            workflowId && fetchWorkflow(workflowId);
+
+            // Remove {'GETWORKFLOW': ''} or {'GETWORKFLOW': 'number'} from accumulated
+            const cleanedAccumulated = accumulated.replace(
+              /\{['"]GETWORKFLOW['"]:\s*['"]\d*['"]\}/g,
+              ""
+            );
+            setChat((prev) => {
+              const updated = [...prev];
+              updated[updated.length - 1] = {
+                role: "assistant",
+                content: cleanedAccumulated,
+              };
+              return updated;
+            });
           }
 
           if (data.error) {
@@ -459,9 +477,35 @@ const ChatStream = ({ onWorkflowSteps }) => {
         setIsLoading(false);
       },
     });
+
+    // console.log("Final accumulated response:", accumulated);
   };
 
-  console.log("Chat state:", chat);
+  const extractGetWorkflowId = (input) => {
+    const match = input.match(/'GETWORKFLOW':\s*'([^']+)'/);
+    return match ? match[1] : null;
+  };
+
+  const fetchWorkflow = async (workflowId) => {
+    try {
+      const response = await fetch("http://13.49.230.109/api/getworkflow", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          workflow_id: workflowId,
+          session_id: "postman-test-123",
+        }),
+      });
+      const data = await response.json();
+      onWorkflowSteps(data);
+      return data;
+    } catch (error) {
+      console.error("Error fetching workflow:", error);
+      return null;
+    }
+  };
 
   return (
     <div className="component-section chat-container">
@@ -475,7 +519,7 @@ const ChatStream = ({ onWorkflowSteps }) => {
         </button>
       </div>
       <div className={`response-area ${isBlurred ? "blurred" : ""}`}>
-        {/* <ReactMarkdown>{response}</ReactMarkdown> */}
+        <ReactMarkdown>{response}</ReactMarkdown>
         {/* <ReactMarkdown>{response2}</ReactMarkdown> */}
         {/*<div ref={responseEndRef} /> */}
 

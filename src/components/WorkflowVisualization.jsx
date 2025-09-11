@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -324,8 +324,8 @@ const WorkflowVisualization = ({ workflowSteps = [] }) => {
         },
       ];
 
-      setNodes(defaultNodes);
-      setEdges(defaultEdges);
+      // setNodes(defaultNodes);
+      // setEdges(defaultEdges);
     } else {
       // Calculate optimal layout positions
       const positions = calculateLayout(workflowSteps);
