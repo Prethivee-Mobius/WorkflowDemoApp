@@ -445,8 +445,10 @@ const ChatStream = ({ onWorkflowSteps }) => {
             console.log("✅ Stream completed");
             setIsLoading(false);
             setPrompt("");
+            console.log("Final accumulated response:", accumulated);
             const workflowId = extractGetWorkflowId(accumulated);
             workflowId && fetchWorkflow(workflowId);
+            console.log("accumulated workflowId", workflowId);
 
             // Remove {'GETWORKFLOW': ''} or {'GETWORKFLOW': 'number'} from accumulated
             const cleanedAccumulated = accumulated.replace(
@@ -507,6 +509,7 @@ const ChatStream = ({ onWorkflowSteps }) => {
     }
   };
 
+  console.log("Render chat:", chat);
   return (
     <div className="component-section chat-container">
       <div className="chat-header">
@@ -537,6 +540,8 @@ const ChatStream = ({ onWorkflowSteps }) => {
             </div>
           ))}
         </div>
+
+        {/* <div ref={responseEndRef} /> */}
       </div>
       <div className="form-container">
         {attachments.length > 0 && (
